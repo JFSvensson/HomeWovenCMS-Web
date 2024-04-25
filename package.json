@@ -1,6 +1,9 @@
 {
   "name": "homewovencms-web",
   "version": "0.1.0",
+  "description": "Homewoven CMS Web App",
+  "author": "Fredrik Svensson <fs222id@student.lnu.se>",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev",
