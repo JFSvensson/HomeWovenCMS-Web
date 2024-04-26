@@ -23,7 +23,7 @@ export function RegisterForm() {
     firstname: '',
     lastname: '',
     email: ''
-  });
+  })
 
   // Handle changes in form inputs
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -40,12 +40,11 @@ export function RegisterForm() {
     const formElement = event.currentTarget as HTMLFormElement
     const formData = new FormData(formElement)
     try {
-      const response = await register(formData)  // Assume register accepts FormData type
+      const response = await register(formData)
       
       console.log('Registration successful', response)
       router.push('/login')
 
-      // Handle further actions like redirecting the user or showing a success message
     } catch (error) {
       console.error('Registration failed', error)
       // TODO Handle errors
@@ -77,5 +76,5 @@ export function RegisterForm() {
       
       <button type="submit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Register</button>
     </form>
-  );
+  )
 }
