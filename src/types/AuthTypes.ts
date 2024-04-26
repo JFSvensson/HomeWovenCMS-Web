@@ -5,6 +5,11 @@ export interface User {
   email: string
 }
 
+export interface LoginData {
+  username: string
+  passphrase: string
+}
+
 export interface AuthContextType {
   user: User | null
   login: (userData: User) => void
