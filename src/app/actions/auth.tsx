@@ -13,8 +13,8 @@ export async function register(formData: FormData) {
       lastName: formData.get('lastname'),
       email: formData.get('email')
     }
-
-    const data = await getData(userData)
+    const url = `register`
+    const data = await getData(userData, url)
 
     return data
     
@@ -23,8 +23,27 @@ export async function register(formData: FormData) {
   }
 }
 
-async function getData(userData : any) {
-  const response = await fetch(`${HOMEWOVEN_API_URL}/auth/register`, {
+export async function login(formData: FormData) {
+  try {
+    // TODO: Add early validation, to prevent unnecessary API calls.
+    console.log('Login user:', formData.get('username'))
+    const userData = {
+      username: formData.get('username'),
+      passphrase: formData.get('passphrase')
+    }
+    const url = `login`
+    const data = await getData(userData, url)
+
+    return data
+    
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+
+async function getData(userData : any, url : string) {
+  const response = await fetch(`${HOMEWOVEN_API_URL}/auth/${url}`, {
     cache: 'no-store',
     method: 'POST',
     headers: {
