@@ -7,18 +7,6 @@ export default function Home() {
     <main>
       <h2>Register</h2>
       <p>Register an account to start using HomeWoven CMS</p>
-        {/* <Button
-          buttonText="Register account"
-          className="primary"
-          onClick={handleRegisterClick}
-        />
-        <p>Already registered?
-          <Button
-            buttonText="Log in here!"
-            className="link"
-            onClick={handleLoginClick}
-            />
-        </p> */}
         <RegisterForm />
     </main>
   )
