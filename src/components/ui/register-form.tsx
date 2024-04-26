@@ -3,21 +3,13 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { register } from '@/app/actions/auth'
-
-// Define the structure of the formData using an interface
-interface UserData {
-  username: string
-  passphrase: string
-  firstname: string
-  lastname: string
-  email: string
-}
+import { RegisterData } from '@/types/AuthTypes'
 
 export function RegisterForm() {
   const router = useRouter()
 
   // State to store input values with initial types
-  const [formData, setFormData] = useState<UserData>({
+  const [formData, setFormData] = useState<RegisterData>({
     username: '',
     passphrase: '',
     firstname: '',
