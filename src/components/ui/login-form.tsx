@@ -3,12 +3,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { login } from '@/app/actions/auth'
-
-// Define the structure of the formData using an interface
-interface LoginData {
-  username: string
-  passphrase: string
-}
+import { LoginData } from '@/types/AuthTypes'
 
 export function LoginForm() {
   const router = useRouter()
