@@ -30,14 +30,8 @@ export function LoginForm() {
     event.preventDefault()
     const formElement = event.currentTarget as HTMLFormElement
     const formData = new FormData(formElement)
-    const user: User = {
-      id: Number(formData.get('id')),
-      username: formData.get('username') as string,
-      email: formData.get('email') as string
-    }
     try {
       const response = await login(formData)
-      console.log('Login successful in form', response)
       router.push('/dashboard')
     } catch (error) {
       console.error('Login failed', error)
@@ -46,6 +40,8 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className='bg-white text-black p-6 rounded shadow-md'>
+      <p>Login to your account to start using HomeWoven CMS</p>
+      <br/>
       <div className='mb-4'>
         <label htmlFor="username" className='block text-sm font-bold mb-2'>Username</label>
         <input id="username" name="username" placeholder="User name" value={formData.username} onChange={handleChange} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
