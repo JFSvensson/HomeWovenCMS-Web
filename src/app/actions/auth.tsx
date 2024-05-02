@@ -1,6 +1,5 @@
 'use client'
 
-import { User } from '@/types/AuthTypes'
 import { setCookie, destroyCookie } from 'nookies'
 import { HOMEWOVEN_API_URL } from '@/config'
 import jwt from 'jsonwebtoken'
@@ -53,16 +52,8 @@ export async function login(formData: FormData) {
       secure: true,
       sameSite: 'lax'
     })
-
     // Decode the access token to get the user data.
-    const decodedToken = jwt.decode(data.access_token)
-    if (!decodedToken || typeof decodedToken === 'string') {
-      throw new Error('Failed to decode token')
-    }
-    const user = (decodedToken as jwt.JwtPayload).given_name
-
-    console.log('Login successful and JWT decoded', user)
-    return user
+    return (fetchUserInformation(data.access_token))
   } else {
     throw new Error(data.message)
   }
@@ -88,3 +79,14 @@ async function getData(userData : any, url : string) {
     throw new Error(data.message)
   }
 } 
+
+export function fetchUserInformation(token : string) {
+  // Decode the access token to get the user data.
+  const decodedToken = jwt.decode(token)
+  if (!decodedToken || typeof decodedToken === 'string') {
+    throw new Error('Failed to decode token')
+  }
+  const username = (decodedToken as jwt.JwtPayload).given_name
+
+  return username
+}
