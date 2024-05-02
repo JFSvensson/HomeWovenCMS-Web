@@ -1,8 +1,8 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode } from 'react'
-import { AuthContextType, User } from '../types/AuthTypes'
-import { login as loginUser, logout as logoutUser } from '../app/actions/auth'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { AuthContextType, User } from '@/types/AuthTypes'
+import { login as loginUser, logout as logoutUser, fetchUserInformation } from '../app/actions/auth'
 
 
 type AuthProviderProps = {
@@ -19,6 +19,16 @@ const AuthContext = createContext<AuthContextType>(defaultContextValue)
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken')
+  
+    if (token) {
+      // If the token exists, use it to fetch the user's information and set the user state.
+      const username = fetchUserInformation(token)
+      setUser({ username })
+    }
+  }, [])
 
   const login = async (formData: FormData) => {
     const loggedInUser = await loginUser(formData)
