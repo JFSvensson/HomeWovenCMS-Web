@@ -18,9 +18,9 @@ const AuthContext = createContext<AuthContextType>(defaultContextValue)
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
 
-  const login = async (userData: User) => {
-    const user = await loginUser(userData)
-    setUser(user)
+  const login = async (formData: FormData) => {
+    const loggedInUser = await loginUser(formData)
+    setUser(loggedInUser)
   }
 
   const logout = () => {
