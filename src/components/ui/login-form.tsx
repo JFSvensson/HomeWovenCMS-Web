@@ -2,10 +2,12 @@
 
 import React, { useState, ChangeEvent, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { login } from '@/app/actions/auth'
 import { LoginData, User } from '@/types/AuthTypes'
+import { useAuth } from '@/context/AuthContext'
+
 
 export function LoginForm() {
+  const { login } = useAuth()
   const router = useRouter()
 
   // State to store input values with initial types
@@ -35,7 +37,7 @@ export function LoginForm() {
     }
     try {
       const response = await login(formData)
-      console.log('Login successful', response)
+      console.log('Login successful in form', response)
       router.push('/dashboard')
     } catch (error) {
       console.error('Login failed', error)
