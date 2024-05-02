@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { login } from '@/app/actions/auth'
-import { LoginData } from '@/types/AuthTypes'
+import { LoginData, User } from '@/types/AuthTypes'
 
 export function LoginForm() {
   const router = useRouter()
@@ -28,15 +28,17 @@ export function LoginForm() {
     event.preventDefault()
     const formElement = event.currentTarget as HTMLFormElement
     const formData = new FormData(formElement)
+    const user: User = {
+      id: Number(formData.get('id')),
+      username: formData.get('username') as string,
+      email: formData.get('email') as string
+    }
     try {
-      const response = await login(formData)
-      
+      const response = await login(user)
       console.log('Login successful', response)
       router.push('/dashboard')
-
     } catch (error) {
       console.error('Login failed', error)
-      // TODO Handle errors
     }
   }
 
@@ -51,7 +53,7 @@ export function LoginForm() {
         <input id="passphrase" name="passphrase" type="password" value={formData.passphrase} onChange={handleChange} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
       </div>
     
-      <button type="submit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Register</button>
+      <button type="submit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Login</button>
     </form>
   )
 }
