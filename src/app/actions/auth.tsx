@@ -3,6 +3,7 @@
 import { User } from '@/types/AuthTypes'
 import { setCookie, destroyCookie } from 'nookies'
 import { HOMEWOVEN_API_URL } from '@/config'
+import jwt from 'jsonwebtoken'
 
 export async function register(formData: FormData) {
   try {
@@ -43,11 +44,25 @@ export async function login(formData: FormData) {
   const data = await response.json()
 
   if (response.ok) {
-    setCookie(null, 'token', data.token, {
+    // Set access token in local storage.
+    localStorage.setItem('accessToken', data.access_token)
+    // Set refresh token in a secure cookie.
+    setCookie(null, 'refreshToken', data.refresh_token, {
       maxAge: 30 * 24 * 60 * 60,
       path: '/',
+      secure: true,
+      sameSite: 'lax'
     })
-    return data.user
+
+    // Decode the access token to get the user data.
+    const decodedToken = jwt.decode(data.access_token)
+    if (!decodedToken || typeof decodedToken === 'string') {
+      throw new Error('Failed to decode token')
+    }
+    const user = (decodedToken as jwt.JwtPayload).given_name
+
+    console.log('Login successful and JWT decoded', user)
+    return user
   } else {
     throw new Error(data.message)
   }
