@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, useContext, useState, ReactNode } from 'react'
 import { AuthContextType, User } from '../types/AuthTypes'
 import { login as loginUser, logout as logoutUser } from '../app/actions/auth'
