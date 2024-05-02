@@ -20,6 +20,6 @@ export interface LoginData {
 
 export interface AuthContextType {
   user: User | null
-  login: (userData: User) => void
+  login: (formData: FormData) => void
   logout: () => void
 }
