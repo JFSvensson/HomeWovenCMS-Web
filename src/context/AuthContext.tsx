@@ -1,36 +1,38 @@
-'use client'
-
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, ReactNode } from 'react'
 import { AuthContextType, User } from '../types/AuthTypes'
+import { login as loginUser, logout as logoutUser } from '../app/actions/auth'
 
-const defaultContextValue: AuthContextType = {
-    user: null,
-    login: () => {},
-    logout: () => {},
-}
 
-const AuthContext = createContext<AuthContextType>(defaultContextValue)
-
-interface AuthProviderProps {
+type AuthProviderProps = {
     children: ReactNode
 }
 
+const defaultContextValue = {
+    user: null,
+    login: () => Promise.reject(),
+    logout: () => {},
+  }
+
+const AuthContext = createContext<AuthContextType>(defaultContextValue)
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
-    const login = (userData: User) => {
-        setUser(userData)
-    }
+  const login = async (userData: User) => {
+    const user = await loginUser(userData)
+    setUser(user)
+  }
 
-    const logout = () => {
-        setUser(null)
-    }
+  const logout = () => {
+    logoutUser()
+    setUser(null)
+  }
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    )
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => useContext(AuthContext)
