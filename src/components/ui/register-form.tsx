@@ -33,10 +33,7 @@ export function RegisterForm() {
     const formData = new FormData(formElement)
     try {
       const response = await register(formData)
-      
-      console.log('Registration successful', response)
       router.push('/login')
-
     } catch (error) {
       console.error('Registration failed', error)
       // TODO Handle errors
@@ -45,6 +42,7 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit} className='bg-white text-black p-6 rounded shadow-md'>
+      <p>Register an account to start using HomeWoven CMS</p>
       <div className='mb-4'>
         <label htmlFor="username" className='block text-sm font-bold mb-2'>Username</label>
         <input id="username" name="username" placeholder="User name" value={formData.username} onChange={handleChange} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
