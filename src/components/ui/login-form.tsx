@@ -2,7 +2,7 @@
 
 import React, { useState, ChangeEvent, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { LoginData, User } from '@/types/AuthTypes'
+import { LoginData } from '@/types/AuthTypes'
 import { useAuth } from '@/context/AuthContext'
 
 

@@ -1,8 +1,6 @@
 // Type definitions for AuthContext
 export interface User {
-  id: number
   username: string
-  email: string
 }
 
 export interface RegisterData {
