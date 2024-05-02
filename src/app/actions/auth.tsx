@@ -25,14 +25,19 @@ export async function register(formData: FormData) {
   }
 }
 
-export async function login(userData: User): Promise<User> {
+export async function login(formData: FormData) {
   // TODO: Add early validation, to prevent unnecessary API calls.
-  const response = await fetch('/api/login', {
+  console.log('Login user:', formData.get('username'))
+  const loginData = {
+    username: formData.get('username'),
+    passphrase: formData.get('passphrase')
+  }
+  const response = await fetch(`${HOMEWOVEN_API_URL}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(userData)
+    body: JSON.stringify(loginData)
   })
 
   const data = await response.json()
