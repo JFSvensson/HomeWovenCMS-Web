@@ -34,7 +34,7 @@ export function LoginForm() {
       email: formData.get('email') as string
     }
     try {
-      const response = await login(user)
+      const response = await login(formData)
       console.log('Login successful', response)
       router.push('/dashboard')
     } catch (error) {
