@@ -1,5 +1,7 @@
 'use client'
 
+import { User } from '@/types/AuthTypes'
+import { setCookie, destroyCookie } from 'nookies'
 import { HOMEWOVEN_API_URL } from '@/config'
 
 export async function register(formData: FormData) {
@@ -23,24 +25,32 @@ export async function register(formData: FormData) {
   }
 }
 
-export async function login(formData: FormData) {
-  try {
-    // TODO: Add early validation, to prevent unnecessary API calls.
-    console.log('Login user:', formData.get('username'))
-    const userData = {
-      username: formData.get('username'),
-      passphrase: formData.get('passphrase')
-    }
-    const url = `login`
-    const data = await getData(userData, url)
+export async function login(userData: User): Promise<User> {
+  // TODO: Add early validation, to prevent unnecessary API calls.
+  const response = await fetch('/api/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+  })
 
-    return data
-    
-  } catch (error) {
-    console.error(error)
+  const data = await response.json()
+
+  if (response.ok) {
+    setCookie(null, 'token', data.token, {
+      maxAge: 30 * 24 * 60 * 60,
+      path: '/',
+    })
+    return data.user
+  } else {
+    throw new Error(data.message)
   }
 }
 
+export function logout() {
+  destroyCookie(null, 'token')
+}
 
 async function getData(userData : any, url : string) {
   const response = await fetch(`${HOMEWOVEN_API_URL}/auth/${url}`, {
@@ -52,5 +62,9 @@ async function getData(userData : any, url : string) {
     body: JSON.stringify(userData)
   })
   const data = await response.json()
-  return data
+  if (response.ok) {
+    return data
+  } else {
+    throw new Error(data.message)
+  }
 } 
