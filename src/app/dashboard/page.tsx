@@ -12,10 +12,19 @@ export default function DashboardPage() {
   const router = useRouter()
   const { user } = useAuth()
   const { logout } = useAuth()
-  const [file, setFile] = useState<File | null>(null)
-  const [article, setArticle] = useState<Article | null>(null)
+  const [file, setFile] = useState({
+    id: '',
+    url: '',
+    description: ''
+  })
+  const [article, setArticle] = useState({
+    id: '',
+    title: '',
+    body: '',
+    imageUrl: '',
+    imageText: ''
+  })
   const [articles, setArticles] = useState<Article[] | null>(null)
-
 
   const API_ARTICLE_URL = 'https://svenssonom.se/homewovencms/api/v1/articles'
 
@@ -44,14 +53,25 @@ export default function DashboardPage() {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-
       const data = await response.json()
-      console.log('The articles: ', data)
-      // Set the articles state
       setArticles(data)
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const updateArticle = (property: keyof Article, value: string) => {
+    setArticle(prevArticle => ({
+      ...prevArticle,
+      [property]: value
+    }))
+  }
+
+  const updateFile = (property: keyof File, value: string) => {
+    setFile(prevFile => ({
+      ...prevFile,
+      [property]: value
+    }))
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -93,50 +113,37 @@ export default function DashboardPage() {
         <br />
 
         <div className='mb-4'>
-        <label htmlFor="title" className='block text-sm font-bold mb-2'>Title</label>
-
-        <textarea value={article?.title} onChange={(e) => 
-          setArticle({
-            id: '',
-            title: e.target.value,
-            body: article?.body || '',
-            imageUrl: '',
-            imageText: article?.imageText || ''
-          })} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
+          <label htmlFor="title" className='block text-sm font-bold mb-2'>Title</label>
+          <textarea value={article?.title} 
+            onChange={(e) => updateArticle('title', e.target.value)}
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' 
+          />
         </div>
 
         <div className='mb-4'>
-        <label htmlFor="body" className='block text-sm font-bold mb-2'>Body</label>
-        <textarea value={article?.body} onChange={(e) => 
-          setArticle({
-            id: '',
-            title: article?.title || '',
-            body: e.target.value,
-            imageUrl: '',
-            imageText: article?.imageText || ''
-          })} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
+          <label htmlFor="body" className='block text-sm font-bold mb-2'>Body</label>
+          <textarea 
+            value={article?.body} 
+            onChange={(e) => updateArticle('body', e.target.value)} 
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' 
+          />
         </div>
         
         <div className='mb-4'>
-        <label htmlFor="file" className='block text-sm font-bold mb-2'>Upload Image</label>
-        <input type="file" onChange={(e) => 
-          setFile({
-            id: '',
-            url: '',
-            description: file?.description || '',
-          })} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
+          <label htmlFor="file" className='block text-sm font-bold mb-2'>Upload Image</label>
+          <input 
+            type="file" onChange={(e) => updateFile('url', e.target.value)} 
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' 
+          />
         </div>
         
         <div className='mb-4'>
-        <label htmlFor="imageText" className='block text-sm font-bold mb-2'>Image Text</label>
-        <textarea value={article?.imageText} onChange={(e) => 
-          setArticle({
-            id: '',
-            title: article?.title || '',
-            body: article?.body || '',
-            imageUrl: '',
-            imageText: e.target.value,
-          })} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />        
+          <label htmlFor="imageText" className='block text-sm font-bold mb-2'>Image Text</label>
+          <textarea 
+            value={article?.imageText} 
+            onChange={(e) => updateArticle('imageText', e.target.value)} 
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' 
+          />
         </div>
         
         <button type="submit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Submit</button>
