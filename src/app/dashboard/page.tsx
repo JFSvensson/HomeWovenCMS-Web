@@ -147,11 +147,15 @@ export default function DashboardPage() {
       <div className='bg-white text-black p-6 rounded shadow-md'>
         <h2>This is your published articles</h2>
         <ul>
-        {articles && Object.values(articles).map((article) => (
+        {articles && Object.values(articles)
+          .filter((article) => article.id !== undefined)
+          .map((article) => (
           <li key={article.id}>
-            <p>{article.id} - {article.title}</p>
-            {/* <Image src={article.imageUrl} alt={article.imageText} width="100" height="100" /> */}
-            <Image src="/TestImage.jpg" alt="Freja walking in forest." width={100} height={100} />
+            <div>
+              {article.title}
+              {/* <Image src={article.imageUrl} alt={article.imageText} width="100" height="100" /> */}
+              <Image src="/TestImage.jpg" alt="Freja walking in forest." width={100} height={100} />
+            </div>
           </li>
         ))}
         </ul>
