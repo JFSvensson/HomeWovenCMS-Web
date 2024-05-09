@@ -59,8 +59,24 @@ export async function login(formData: FormData) {
   }
 }
 
-export function logout() {
-  destroyCookie(null, 'token')
+export async function logout() {
+  try {
+    const response = await fetch(`${HOMEWOVEN_API_URL}/auth/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    destroyCookie(null, 'refreshToken')
+    localStorage.removeItem('accessToken')
+  } catch (error) {
+    console.error(error)
+  } 
 }
 
 async function getData(userData : any, url : string) {
