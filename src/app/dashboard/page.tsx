@@ -37,7 +37,14 @@ export default function DashboardPage() {
 
   const fetchArticles = async () => {
     try {
-      const response = await fetch(API_ARTICLE_URL)
+      const response = await fetch(API_ARTICLE_URL, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+
       const data = await response.json()
       console.log('The articles: ', data)
       // Set the articles state
@@ -140,10 +147,11 @@ export default function DashboardPage() {
       <div className='bg-white text-black p-6 rounded shadow-md'>
         <h2>This is your published articles</h2>
         <ul>
-        {articles && articles.map((article) => (
+        {articles && Object.values(articles).map((article) => (
           <li key={article.id}>
-            <p>{article.title}</p>
-            <Image src={article.imageUrl} alt={article.imageText} />
+            <p>{article.id} - {article.title}</p>
+            {/* <Image src={article.imageUrl} alt={article.imageText} width="100" height="100" /> */}
+            <Image src="/TestImage.jpg" alt="Freja walking in forest." width={100} height={100} />
           </li>
         ))}
         </ul>
