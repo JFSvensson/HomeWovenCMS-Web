@@ -60,11 +60,18 @@ export async function login(formData: FormData) {
 }
 
 export async function logout() {
+  const token = localStorage.getItem('accessToken')
+  
+  if (!token) {
+    throw new Error('No token found')
+  }
+
   try {
     const response = await fetch(`${HOMEWOVEN_API_URL}/auth/logout`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       }
     })
 
