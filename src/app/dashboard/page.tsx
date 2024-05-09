@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useAuth } from '@/context/AuthContext'
+import Button from '@/components/ui/button'
 import { Article } from '@/types/ArticleTypes'
 import { File } from '@/types/FileTypes'
 
 export default function Home() {
   const router = useRouter()
   const { user } = useAuth()
+  const { logout } = useAuth()
   const [file, setFile] = useState<File | null>(null)
   const [article, setArticle] = useState<Article | null>(null)
   const [articles, setArticles] = useState<Article[] | null>(null)
@@ -65,8 +67,20 @@ export default function Home() {
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      logout()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <main>
+      <div>
+        <Button onClick={handleLogout}>Logout</Button>
+      </div>
+
       <form onSubmit={handleSubmit} className='bg-white text-black p-6 rounded shadow-md'>
         <p>This is the Dashboards where you controll and create new articles.</p>
         <br />
