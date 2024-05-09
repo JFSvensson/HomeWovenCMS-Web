@@ -26,6 +26,7 @@ export default function DashboardPage() {
     owner: ''
   })
   const [articles, setArticles] = useState<Article[] | null>(null)
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
 
   const API_ARTICLE_URL = 'https://svenssonom.se/homewovencms/api/v1/articles'
 
@@ -56,6 +57,22 @@ export default function DashboardPage() {
       })
       const data = await response.json()
       setArticles(data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function editArticle(id: string) {
+    try {
+      const response = await fetch(API_ARTICLE_URL + '/' + id, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      const data = await response.json()
+      setSelectedArticle(data || null)
     } catch (error) {
       console.error(error)
     }
@@ -161,22 +178,39 @@ export default function DashboardPage() {
 
       <br />
       
-      <div className='bg-white text-black p-6 rounded shadow-md'>
-        <h2>This is your published articles</h2>
-        <ul>
-        {articles && Object.values(articles)
-          .filter((article) => article.id !== undefined)
-          .map((article) => (
-          <li key={article.id}>
-            <div>
-              {article.title}
-              {/* <Image src={article.imageUrl} alt={article.imageText} width="100" height="100" /> */}
-              <Image src="/TestImage.jpg" alt="Freja walking in forest." width={100} height={100} />
-            </div>
-          </li>
-        ))}
-        </ul>
-      </div>
+      {selectedArticle ? (
+        <div>
+          <h1>{selectedArticle.title}</h1>
+          <p>{selectedArticle.body}</p>
+          <Image src="/TestImage.jpg" alt="Freja walking in forest." width={100} height={100} />
+          {/* Add more fields as needed */}
+          <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            onClick={() => setSelectedArticle(null)}>Back to list</button>
+        </div>
+      ) : (
+        <div className='bg-white text-black p-6 rounded shadow-md'>
+          <h2>This is your published articles</h2>
+          <ul>
+          {articles && Object.values(articles)
+            .filter((article) => article.id !== undefined)
+            .map((article) => (
+            <li key={article.id}>
+              <div>
+                {article.title}
+                {/* <Image src={article.imageUrl} alt={article.imageText} width="100" height="100" /> */}
+                <Image src="/TestImage.jpg" alt="Freja walking in forest." width={100} height={100} />
+                <div>
+                  <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' 
+                    onClick={() => editArticle(article.id)}>Edit</button>
+                  {/* <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' 
+                    onClick={() => deleteArticle(article.id)}>Delete</button> */}
+                </div>
+              </div>
+            </li>
+          ))}
+          </ul>
+        </div>
+      )}
     </main>
   )
 }
