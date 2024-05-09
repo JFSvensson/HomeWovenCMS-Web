@@ -67,7 +67,13 @@ export default function Home() {
 
   return (
     <main>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className='bg-white text-black p-6 rounded shadow-md'>
+        <p>This is the Dashboards where you controll and create new articles.</p>
+        <br />
+
+        <div className='mb-4'>
+        <label htmlFor="title" className='block text-sm font-bold mb-2'>Title</label>
+
         <textarea value={article?.title} onChange={(e) => 
           setArticle({
             id: '',
@@ -75,8 +81,11 @@ export default function Home() {
             body: article?.body || '',
             imageUrl: '',
             imageText: article?.imageText || ''
-          })} />
+          })} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
+        </div>
 
+        <div className='mb-4'>
+        <label htmlFor="body" className='block text-sm font-bold mb-2'>Body</label>
         <textarea value={article?.body} onChange={(e) => 
           setArticle({
             id: '',
@@ -84,15 +93,21 @@ export default function Home() {
             body: e.target.value,
             imageUrl: '',
             imageText: article?.imageText || ''
-          })} />
-
+          })} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
+        </div>
+        
+        <div className='mb-4'>
+        <label htmlFor="file" className='block text-sm font-bold mb-2'>Upload Image</label>
         <input type="file" onChange={(e) => 
           setFile({
             id: '',
             url: '',
             description: file?.description || '',
-          })} />
-
+          })} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />
+        </div>
+        
+        <div className='mb-4'>
+        <label htmlFor="imageText" className='block text-sm font-bold mb-2'>Image Text</label>
         <textarea value={article?.imageText} onChange={(e) => 
           setArticle({
             id: '',
@@ -100,19 +115,25 @@ export default function Home() {
             body: article?.body || '',
             imageUrl: '',
             imageText: e.target.value,
-          })} />        
-        <button type="submit">Submit</button>
+          })} className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' />        
+        </div>
+        
+        <button type="submit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Submit</button>
       </form>
 
-      <h2>Articles</h2>
-      <ul>
-      {articles && articles.map((article) => (
-        <li key={article.id}>
-          <p>{article.title}</p>
-          <Image src={article.imageUrl} alt={article.imageText} />
-        </li>
-      ))}
-      </ul>
+      <br />
+      
+      <div className='bg-white text-black p-6 rounded shadow-md'>
+        <h2>This is your published articles</h2>
+        <ul>
+        {articles && articles.map((article) => (
+          <li key={article.id}>
+            <p>{article.title}</p>
+            <Image src={article.imageUrl} alt={article.imageText} />
+          </li>
+        ))}
+        </ul>
+      </div>
     </main>
   )
 }
