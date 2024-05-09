@@ -21,8 +21,9 @@ export default function DashboardPage() {
     id: '',
     title: '',
     body: '',
-    imageUrl: '',
-    imageText: ''
+    imageUrl: 'http://www.dn.se/',
+    imageText: '',
+    owner: ''
   })
   const [articles, setArticles] = useState<Article[] | null>(null)
 
@@ -37,7 +38,7 @@ export default function DashboardPage() {
     } else {
       fetchArticles()
     }
-  
+
     // Cleanup function
     return () => {
       isMounted = false
@@ -77,8 +78,13 @@ export default function DashboardPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
-    const formData = new FormData()
-    formData.append('article', JSON.stringify(article))
+    const articleData = {
+      title: article.title,
+      body: article.body,
+      imageUrl: article.imageUrl,
+      imageText: article.imageText,
+      owner: article.owner
+    }
     // if (file) {
     //   formData.append('file', file)
     // }
@@ -86,7 +92,11 @@ export default function DashboardPage() {
     try {
       await fetch(API_ARTICLE_URL, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
+        body: JSON.stringify(articleData)
       })
       fetchArticles()
     } catch (error) {
