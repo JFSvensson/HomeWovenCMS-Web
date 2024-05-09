@@ -8,7 +8,7 @@ import Button from '@/components/ui/button'
 import { Article } from '@/types/ArticleTypes'
 import { File } from '@/types/FileTypes'
 
-export default function Home() {
+export default function DashboardPage() {
   const router = useRouter()
   const { user } = useAuth()
   const { logout } = useAuth()

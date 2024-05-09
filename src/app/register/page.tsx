@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
-import Button from '@/components/ui/button'
+import React from 'react'
 import { RegisterForm } from '@/components/ui/register-form'
 
-export default function Home() {
+export default function RegisterPage() {
   return (
     <main>
       <RegisterForm />
