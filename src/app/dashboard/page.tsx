@@ -78,6 +78,24 @@ export default function DashboardPage() {
     }
   }
 
+  const saveChanges = async () => {
+    try {
+      console.log(selectedArticle)
+      if (!selectedArticle) return
+      await fetch(API_ARTICLE_URL + `/${selectedArticle.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
+        body: JSON.stringify(selectedArticle),
+      })
+      // Refresh the list of articles or handle the updated article
+    } catch (error) {
+      console.error('Failed to update article:', error)
+    }
+  }
+
   const updateArticle = (property: keyof Article, value: string) => {
     setArticle(prevArticle => ({
       ...prevArticle,
@@ -179,13 +197,25 @@ export default function DashboardPage() {
       <br />
       
       {selectedArticle ? (
-        <div>
-          <h1>{selectedArticle.title}</h1>
-          <p>{selectedArticle.body}</p>
+        <div  className='bg-white text-black p-6 rounded shadow-md'>
+          <label htmlFor="title" className='block text-sm font-bold mb-2'>Title</label>
+          <textarea value={selectedArticle.title} onChange={(e) => setSelectedArticle({...selectedArticle, title: e.target.value})} 
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+          />
+
+          <label htmlFor="body" className='block text-sm font-bold mb-2'>Body</label>
+          <textarea value={selectedArticle.body} onChange={(e) => setSelectedArticle({...selectedArticle, body: e.target.value})} 
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+          />
           <Image src="/TestImage.jpg" alt="Freja walking in forest." width={100} height={100} />
           {/* Add more fields as needed */}
           <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-            onClick={() => setSelectedArticle(null)}>Back to list</button>
+            onClick={() => { 
+              setSelectedArticle(null)
+              fetchArticles()
+            }}>Back to list</button>
+          <button className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            onClick={saveChanges}>Save Changes</button>
         </div>
       ) : (
         <div className='bg-white text-black p-6 rounded shadow-md'>
