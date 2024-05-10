@@ -211,6 +211,9 @@ export default function DashboardPage() {
           {/* Add more fields as needed */}
           <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             onClick={() => { 
+              if (window.confirm('Do you want to save the changes?')) {
+                saveChanges()
+              }
               setSelectedArticle(null)
               fetchArticles()
             }}>Back to list</button>
