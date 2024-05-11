@@ -4,18 +4,17 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { AuthContextType, User } from '@/types/AuthTypes'
 import { login as loginUser, logout as logoutUser, fetchUserInformation } from '../app/actions/auth'
 
-
 type AuthProviderProps = {
     children: ReactNode
 }
 
 const defaultContextValue = {
     user: null,
-    login: () => Promise.reject(),
+    login: () => Promise.resolve(false),
     logout: () => {},
   }
 
-const AuthContext = createContext<AuthContextType>(defaultContextValue)
+export const AuthContext = createContext<AuthContextType>(defaultContextValue)
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
@@ -30,9 +29,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [])
 
-  const login = async (formData: FormData) => {
-    const loggedInUser = await loginUser(formData)
-    setUser(loggedInUser)
+  async function login (formData: FormData): Promise<boolean> {
+    try {
+      const loggedInUser = await loginUser(formData)
+      setUser(loggedInUser)
+      return true
+    } catch (error) {
+      console.error('Login failed:', error)
+      return false
+    }
   }
 
   const logout = () => {
