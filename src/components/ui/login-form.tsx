@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { LoginData } from '@/types/AuthTypes'
 import { useAuth } from '@/context/AuthContext'
 
-
 export function LoginForm() {
   const { login } = useAuth()
   const router = useRouter()
@@ -18,7 +17,7 @@ export function LoginForm() {
 
   // Handle changes in form inputs
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     setFormData(prevData => ({
       ...prevData,
       [name]: value
@@ -31,8 +30,12 @@ export function LoginForm() {
     const formElement = event.currentTarget as HTMLFormElement
     const formData = new FormData(formElement)
     try {
-      const response = await login(formData)
-      router.push('/dashboard')
+      const loginSuccessful = await login(formData)
+      if (loginSuccessful) {
+        router.push('/dashboard')
+      } else {
+        console.error('Login failed')
+      }
     } catch (error) {
       console.error('Login failed', error)
     }
