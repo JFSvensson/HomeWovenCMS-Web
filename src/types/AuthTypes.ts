@@ -18,6 +18,6 @@ export interface LoginData {
 
 export interface AuthContextType {
   user: User | null
-  login: (formData: FormData) => void
+  login: (formData: FormData) => Promise<boolean>
   logout: () => void
 }
