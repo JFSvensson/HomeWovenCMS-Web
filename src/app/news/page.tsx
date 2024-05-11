@@ -2,11 +2,17 @@
 
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react'
 import Image from 'next/image'
+import { ArticlesContext } from '@/context/ArticlesContext'
 import { Article } from '@/types/ArticleTypes'
 
 export default function NewsPage() {
 
   const [articles, setArticles] = useState<Article[] | null>(null)
+  const { fetchAllArticles } = useContext(ArticlesContext)
+
+  useEffect(() => {
+    fetchAllArticles()
+  })
 
   return (
       <div className='bg-white text-black p-6 rounded shadow-md'>
