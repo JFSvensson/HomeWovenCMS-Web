@@ -1,17 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useAuth } from '@/context/AuthContext'
 import Button from '@/components/ui/button'
 import { Article } from '@/types/ArticleTypes'
 import { File } from '@/types/FileTypes'
+import { ArticlesContext } from '@/context/ArticlesContext'
 
 export default function DashboardPage() {
   const router = useRouter()
   const { user } = useAuth()
   const { logout } = useAuth()
+  const { fetchAllArticles } = useContext(ArticlesContext)
   const [file, setFile] = useState({
     id: '',
     url: '',
@@ -27,7 +29,7 @@ export default function DashboardPage() {
   })
   const [articles, setArticles] = useState<Article[] | null>(null)
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
-
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const API_ARTICLE_URL = 'https://svenssonom.se/homewovencms/api/v1/articles'
 
   useEffect(() => {
@@ -37,30 +39,14 @@ export default function DashboardPage() {
     if (!user && isMounted) {
       router.push('/login')
     } else {
-      fetchArticles()
+      fetchAllArticles()
     }
 
     // Cleanup function
     return () => {
       isMounted = false
     }
-  }, [user, router])
-
-  const fetchArticles = async () => {
-    try {
-      const response = await fetch(API_ARTICLE_URL, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      })
-      const data = await response.json()
-      setArticles(data)
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  })
 
   async function editArticle(id: string) {
     try {
@@ -90,7 +76,6 @@ export default function DashboardPage() {
         },
         body: JSON.stringify(selectedArticle),
       })
-      // Refresh the list of articles or handle the updated article
     } catch (error) {
       console.error('Failed to update article:', error)
     }
@@ -120,9 +105,6 @@ export default function DashboardPage() {
       imageText: article.imageText,
       owner: article.owner
     }
-    // if (file) {
-    //   formData.append('file', file)
-    // }
 
     try {
       await fetch(API_ARTICLE_URL, {
@@ -133,7 +115,7 @@ export default function DashboardPage() {
         },
         body: JSON.stringify(articleData)
       })
-      fetchArticles()
+      fetchAllArticles()
     } catch (error) {
       console.error(error)
     }
@@ -211,12 +193,15 @@ export default function DashboardPage() {
           {/* Add more fields as needed */}
           <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             onClick={() => { 
-              if (window.confirm('Do you want to save the changes?')) {
+              if (hasUnsavedChanges && window.confirm('Do you want to save the changes?')) {
                 saveChanges()
+                setHasUnsavedChanges(false)
               }
               setSelectedArticle(null)
-              fetchArticles()
+              fetchAllArticles()
             }}>Back to list</button>
+          <button className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            onClick={saveChanges}>Delete</button>
           <button className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             onClick={saveChanges}>Save Changes</button>
         </div>
@@ -226,6 +211,7 @@ export default function DashboardPage() {
           <ul>
           {articles && Object.values(articles)
             .filter((article) => article.id !== undefined)
+            .reverse()
             .map((article) => (
             <li key={article.id}>
               <div>
@@ -235,6 +221,8 @@ export default function DashboardPage() {
                 <div>
                   <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' 
                     onClick={() => editArticle(article.id)}>Edit</button>
+                  <button className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                    onClick={saveChanges}>Delete</button>
                   {/* <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' 
                     onClick={() => deleteArticle(article.id)}>Delete</button> */}
                 </div>
