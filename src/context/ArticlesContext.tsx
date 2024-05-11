@@ -22,7 +22,7 @@ export const ArticlesContext = React.createContext<ArticlesContextType>(defaultA
 export const ArticlesProvider: React.FC<Props> = ({ children }) => {
   const [articles, setArticles] = useState([])
 
-  const fetchAllArticles = async () => {
+  const fetchArticles = async () => {
     const API_ARTICLE_URL = 'https://svenssonom.se/homewovencms/api/v1/articles'
 
     try {
@@ -51,10 +51,10 @@ export const ArticlesProvider: React.FC<Props> = ({ children }) => {
     }
   }
 
-  const debouncedFetchAllArticles = debounce(fetchAllArticles, 2000)
+ const fetchAllArticles = debounce(fetchArticles, 5000)
 
   useEffect(() => {
-    debouncedFetchAllArticles()
+    fetchAllArticles()
   })
 
   return (
