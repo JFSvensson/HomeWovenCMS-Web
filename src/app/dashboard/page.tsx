@@ -13,7 +13,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const { user } = useAuth()
   const { logout } = useAuth()
-  const { fetchAllArticles } = useContext(ArticlesContext)
+  const { articles, fetchAllArticles } = useContext(ArticlesContext)
   const [file, setFile] = useState({
     id: '',
     url: '',
@@ -27,7 +27,6 @@ export default function DashboardPage() {
     imageText: '',
     owner: ''
   })
-  const [articles, setArticles] = useState<Article[] | null>(null)
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const API_ARTICLE_URL = 'https://svenssonom.se/homewovencms/api/v1/articles'
@@ -88,6 +87,21 @@ export default function DashboardPage() {
     }))
   }
 
+  const deleteArticle = async (id: string) => {
+    try {
+      await fetch(API_ARTICLE_URL + `/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      fetchAllArticles()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const updateFile = (property: keyof File, value: string) => {
     setFile(prevFile => ({
       ...prevFile,
@@ -105,7 +119,6 @@ export default function DashboardPage() {
       imageText: article.imageText,
       owner: article.owner
     }
-
     try {
       await fetch(API_ARTICLE_URL, {
         method: 'POST',
@@ -221,10 +234,8 @@ export default function DashboardPage() {
                 <div>
                   <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' 
                     onClick={() => editArticle(article.id)}>Edit</button>
-                  <button className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-                    onClick={saveChanges}>Delete</button>
-                  {/* <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' 
-                    onClick={() => deleteArticle(article.id)}>Delete</button> */}
+                  <button className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' 
+                    onClick={() => deleteArticle(article.id)}>Delete</button>
                 </div>
               </div>
             </li>
