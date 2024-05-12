@@ -34,7 +34,6 @@ export const ArticlesProvider: React.FC<Props> = ({ children }) => {
         }
       })
       const data = await response.json()
-      console.log(data)
       setArticles(data)
     } catch (error) {
       console.error('Failed to fetch articles:', error)
