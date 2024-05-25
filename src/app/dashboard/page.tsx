@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { useAuth } from '@/context/AuthContext'
 import Button from '@/components/ui/button'
 import { Article } from '@/types/ArticleTypes'
-import { File } from '@/types/FileTypes'
+import { FileData } from '@/types/FileTypes'
 import { ArticlesContext } from '@/context/ArticlesContext'
 
 export default function DashboardPage() {
@@ -14,22 +14,24 @@ export default function DashboardPage() {
   const { user } = useAuth()
   const { logout } = useAuth()
   const { articles, fetchAllArticles } = useContext(ArticlesContext)
-  const [file, setFile] = useState({
-    id: '',
-    url: '',
+  const [file, setFile] = useState<File | null>(null)
+  const [fileData, setFileData] = useState<FileData>({ 
+    id: '', 
+    url: '', 
     description: ''
   })
   const [article, setArticle] = useState({
     id: '',
     title: '',
     body: '',
-    imageUrl: 'http://www.dn.se/',
+    imageUrl: '',
     imageText: '',
     owner: ''
   })
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const API_ARTICLE_URL = 'https://svenssonom.se/homewovencms/api/v1/articles'
+  const API_FILE_URL = 'https://svenssonom.se/homewovencms/api/v1/files'
 
   useEffect(() => {
     let isMounted = true
@@ -102,25 +104,54 @@ export default function DashboardPage() {
     }
   }
 
-  const updateFile = (property: keyof File, value: string) => {
-    setFile(prevFile => ({
-      ...prevFile,
-      [property]: value
-    }))
+  const updateFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const uploadedFile = e.target.files[0]
+      setFile(uploadedFile)
+      setFileData({
+        id: '',
+        url: URL.createObjectURL(uploadedFile),
+        description: ''
+      })
+    }
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-
-    const articleData = {
-      title: article.title,
-      body: article.body,
-      imageUrl: article.imageUrl,
-      imageText: article.imageText,
-      owner: article.owner
-    }
+    console.log('Skickar!')
     try {
-      await fetch(API_ARTICLE_URL, {
+      let imageUrl = ''
+      if (file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('description', article.imageText || '')
+
+        const fileResponse = await fetch(API_FILE_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          },
+          body: formData
+        })
+
+        if (!fileResponse.ok) {
+          throw new Error('File upload failed')
+        }
+
+        const fileResponseData = await fileResponse.json()
+        imageUrl = fileResponseData.path
+        console.log('File uploaded', imageUrl)
+      }
+
+      const articleData = {
+        title: article.title,
+        body: article.body,
+        imageUrl: imageUrl,
+        imageText: article.imageText,
+        owner: article.owner
+      }
+      console.log('Article data:', articleData)
+      const articleResponse = await fetch(API_ARTICLE_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,6 +159,14 @@ export default function DashboardPage() {
         },
         body: JSON.stringify(articleData)
       })
+
+      if (!articleResponse.ok) {
+        throw new Error('Article submission failed')
+      }
+      
+      const data = await articleResponse.json()
+      console.log('Article submitted successfully:', data)
+
       fetchAllArticles()
     } catch (error) {
       console.error(error)
@@ -172,9 +211,21 @@ export default function DashboardPage() {
         <div className='mb-4'>
           <label htmlFor="file" className='block text-sm font-bold mb-2'>Upload Image</label>
           <input 
-            type="file" onChange={(e) => updateFile('url', e.target.value)} 
+            type="file" 
+            onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                const uploadedFile = e.target.files[0]
+                setFile(uploadedFile)
+                setFileData({
+                  id: '',
+                  url: URL.createObjectURL(uploadedFile),
+                  description: ''
+                })
+              }
+            }} 
             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' 
           />
+
         </div>
         
         <div className='mb-4'>
